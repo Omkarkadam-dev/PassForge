@@ -4,74 +4,89 @@ const uppercaseEl = document.getElementById('uppercase')
 const lowercaseEl = document.getElementById('lowercase')
 const symbolsEl = document.getElementById('symbol')
 const numbersEl = document.getElementById('number')
-const generateEl = document.getElementById('genrate')
+const generateEl = document.getElementById('generate')
 const clipboardEl = document.getElementById('clipboard')
+const copyPasswordButton = document.querySelector('.copy-button')
 
-const randomFun = {
-    lower: getRandomLower,
-    upper: getRandomUpper,
-    number: getRandomNumber,
-    symbols: getRamdomSymbol
+
+// array of for each case
+const upperValues = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const lowerValues = "abcdefghijklmnopqrstuvwxyz"
+const numbers = "1234567890"
+const symbols = "!@#$%^&*()"
+
+
+// event on generate password button
+generateEl.addEventListener('click', generatePassword)
+
+// event on copying the password to the clipboard
+copyPasswordButton.onclick = function () {
+    navigator.clipboard.writeText(resultEl.textContent)
 }
 
 
-generateEl.addEventListener('click', () => {
-    const length = +lengthEl.value
-    const hasLower = lowercaseEl.checked
-    const hasUpper = uppercaseEl.checked;
-    const hasNumber = numbersEl.checked;
-    const hasSymbol = symbolsEl.checked;
+function generatePassword() {
 
-    resultEl.innerText = generatePassword(hasLower, hasUpper, hasNumber, hasSymbol, length)
-})
+    // fetching the information related to check box whether it is checked or not
+    const isUpperCase = uppercaseEl.checked
+    const isLowerCase = lowercaseEl.checked
+    const isNumber = numbersEl.checked
+    const isSymbol = symbolsEl.checked
+
+    // debuggin console 
+    // console.log(isUpperCase, isLowerCase, isNumber, isSymbol)
+
+    // password string
+    let mainString = ""
 
 
-function generatePassword(lower, upper, number, symbol, length) {
-    let generatedPassword = ``;
+    // assigning the string base of the case checked 
 
-    let typeCount = lower + upper + number + symbol
-
-    const typesArr = [{ lower }, { upper }, { number }, { symbol }].filter((item) =>
-        Object.values(item)[0]
-    )
-
-    if (typeCount === 0) {
-        return ``;
+    if (isUpperCase) {
+        mainString += upperValues
+        console.log(mainString)
     }
 
-    for (let i = 0; i < length; i += typeCount) {
-        typesArr.forEach((type) => {
-            const keyFromRandomFun = Object.keys(type)[0]
-            console.log(keyFromRandomFun)
-            generatePassword += randomFun[keyFromRandomFun]()
-        })
+    if (isLowerCase) {
+        mainString += lowerValues
+        console.log(mainString)
     }
 
-    const finalPassword = generatedPassword.slice(0, length)
-    console.log(finalPassword)
-    return finalPassword
+    if (isNumber) {
+        mainString += numbers
+        console.log(mainString)
+    }
+
+    if (isSymbol) {
+        mainString += symbols
+        console.log(mainString)
+    }
+
+    // converint string into array 
+
+    const arrayOfPasswordString = mainString.split('')
+
+    // debuggin console 
+    // console.log(arrayOfPasswordString)
+
+
+    // converting into random password
+    let result = randomStringGenerate(arrayOfPasswordString, lengthEl.value)
+
+    // assigning the result to the p tag
+
+    resultEl.textContent = result
 }
 
 
-//to genrate lowercase letters, have to btw 97 to 122 charcode
-function getRandomLower() {
-    return String.fromCharCode(Math.floor(Math.random() * 26) + 97);
-}
+// function to generate the element randomly 
+function randomStringGenerate(array, length) {
 
+    let password = ""
 
-//to genrate uppercase letters, have to btw 65 to 90 charcode
-function getRandomUpper() {
-    return String.fromCharCode(Math.floor(Math.random() * 26) + 65);
-}
+    for (let i = 0; i < length; i++) {
+        password = password + (array[(Math.floor(Math.random() * array.length))])
+    }
 
-
-//to genrate numbers, have to btw 48 to 57 charcode
-function getRandomNumber() {
-    return String.fromCharCode(Math.floor(Math.random() * 10) + 48);
-}
-
-
-function getRamdomSymbol() {
-    const symbols = "!@#$%^&*(){}[]=<>/,.";
-    return symbols[Math.floor(Math.random() * symbols.length)];
+    return password
 }
